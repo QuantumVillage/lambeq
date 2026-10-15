@@ -272,7 +272,7 @@ class DisCoCircReader(Reader):
         `min_noun_freq`, or if any of their mentions is a word in
         `pruned_nouns`. Entities are identified by position, so other
         entities with the same surface form are unaffected.
-        
+
         """
         pruned_nouns = set(pruned_nouns)
         noun_counts = Counter(corefd.values())
