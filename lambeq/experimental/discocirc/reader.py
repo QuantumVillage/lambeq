@@ -268,9 +268,11 @@ class DisCoCircReader(Reader):
                        pruned_nouns: Iterable[str] = (),
                        min_noun_freq: int = 1) -> list[set[int]]:
         """
-        Entities are pruned if it's referenced fewer times than `min_noun_freq`, or
-        if any of its mentions are a word in `pruned_nouns`. Entities are ref'd
-        by position, so other entities with the same surface form are unaffected.
+        Entities are pruned if they are referenced fewer times than
+        `min_noun_freq`, or if any of their mentions is a word in
+        `pruned_nouns`. Entities are identified by position, so other
+        entities with the same surface form are unaffected.
+        
         """
         pruned_nouns = set(pruned_nouns)
         noun_counts = Counter(corefd.values())
@@ -278,14 +280,14 @@ class DisCoCircReader(Reader):
                            if count < min_noun_freq}
         pruned_ids: list[set[int]] = [set() for _ in sentences]
         for i, sentence in enumerate(sentences):
-          for j, word in enumerate(sentence):
-            if word in pruned_nouns:
-              pruned_ids[i].add(j)
-              if (i, j) in corefd:
-                pruned_entities.add(corefd[i, j])
+            for j, word in enumerate(sentence):
+                if word in pruned_nouns:
+                    pruned_ids[i].add(j)
+                    if (i, j) in corefd:
+                        pruned_entities.add(corefd[i, j])
         for (i, j), nid in corefd.items():
-          if nid in pruned_entities:
-            pruned_ids[i].add(j)
+            if nid in pruned_entities:
+                pruned_ids[i].add(j)
         return pruned_ids
 
     def text2circuit(self,
@@ -315,7 +317,7 @@ class DisCoCircReader(Reader):
         pruned_nouns : iterable of strings, default: ()
             If any of the nouns in this list are present in the diagram,
             the corresponding state and wire are removed from the
-            diagram, alonsie every noun coreferent with them.
+            diagram, alongside every noun coreferent with them.
         min_noun_freq: int, default: 1
             Mininum number of times an entity needs to be referenced to
             appear in the circuit.
@@ -337,7 +339,8 @@ class DisCoCircReader(Reader):
         sentences, corefs = self.coref_resolver.tokenise_and_coref(text)
         corefd = self.coref_resolver.dict_from_corefs(corefs)
 
-        pruned_ids = self._prune_indices(sentences, corefd, pruned_nouns, min_noun_freq)
+        pruned_ids = self._prune_indices(sentences, corefd, pruned_nouns,
+                                         min_noun_freq)
 
         rewriter = TreeRewriter(rewrite_rules)
 
